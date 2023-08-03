@@ -1,18 +1,14 @@
-#Test
 #
 # === Mp3Recorder.csv ===
 #
 # Requires an 'outlook' account on the tablet.
 # Follow the Username,Password,Sender pattern.
 #
-Username,dovczitter@outlook.com
+Username,username@outlook.com
 Password,@Mypassword1
-Sender,dovczitter@outlook.com
+Sender,username@outlook.com
 # wip - requires both yahoo and outlook, may be a bug or outlook requirement.
-Receiver,dov_czitter@yahoo.com,dovczitter@outlook.com
-#Receiver,dov_czitter@yahoo.com
-# I added the standard shiur cc list, check to resolve short names, ie:'Yisroel Ausfresser,Aaron Drillick'
-#Receiver,yossi31@aol.com,Yisroel Ausfresser,Aaron Drillick,chiamsteinberg@gmail.com,simcha4all@msn.com,shlomozaslow@gmail.com,yussyk@gmail.com,robert.darnowsky@springer.com,yudkay@verizon.net,Moshe Rubin,mordygelbtuch@hotmail.com,mweitman.tag@gmail.com,lhonikman71@aol.com,isaac.pinter@nyumc.org,scgoldsteinmd@gmail.com,docahrmd@gmail.com,thecitronfamily@gmail.com,freewayfashions@hotmail.com,mr44575@gmail.com,goldbergh@optonline.net,msoroka@sunyopt.edu,tlsbc@aol.com,cmerstein@gmail.com,dov_czitter@yahoo.com,kier840e@msn.com,zviweinreb@aol.com,cszalman@gmail.com,benjamin klein,kier8@verizon.net
+Receiver,username@yahoo.com,username@outlook.com
 #
 Host,smtp-mail.outlook.com
 Port,587
