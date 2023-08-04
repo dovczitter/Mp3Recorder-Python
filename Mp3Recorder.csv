@@ -1,18 +1,27 @@
 #
 # === Mp3Recorder.csv ===
+#    <key>,<value> pair
 #
+
+# Recorded file name base filename:
 Mp3FileRoot,Mp3RecorderTest
-#
+
 # Requires an 'outlook' account on the tablet.
 # Follow the Username,Password,Sender pattern.
-#
-Username,username@outlook.com
-Password,@Mypassword1
-Sender,username@outlook.com
-# wip - requires both yahoo and outlook, may be a bug or outlook requirement.
-Receiver,username@yahoo.com,username@outlook.com
-#
+
+# Outlook host and port
 Host,smtp-mail.outlook.com
 Port,587
-#
-#
+
+# Outlook login username:
+Username,myusername@outlook.com
+
+# Outlook login password:
+Password,@Mypassword
+
+# Outlook email 'From':
+Sender,myusername@outlook.com
+
+# Outlook email 'To' list:
+# wip - requires both yahoo and outlook, may be a bug or outlook requirement.
+Receiver,myusername@outlook.com,buddy1@addr1.com,buddy2@addr2.com,

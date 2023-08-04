@@ -157,7 +157,7 @@ Android 11 Python app to record and email mp3 files.
 
         Assuming *.py, *.csv, *.png and .gitignore are installed, to generate the bin/Mp3Reorder.apk, run:
         $  buildozer -v android debug 
-        First build will talk may minutes, must see the ending 'BUILD SUCCESSFUL' to generate an apk.
+        First build will take many minutes, must see the ending 'BUILD SUCCESSFUL' to generate an apk.
         Next build should be less than a minute, to fully rebuild, 'rm -rf .bin'.
 # 6. Installation
     - I used this tablet:
@@ -172,11 +172,23 @@ Android 11 Python app to record and email mp3 files.
       NOTE - Windows explorer to the tablet's 'Internal shared storage' on connecting the usb in DEBUG mode.
     - Enable the tablet's Wifi.
     - Suggest that you edit the Mp3Recorder.csv file and copy via explore to the tablet's 'Main storage > Documents > Mp3Recorder' folder.
-    - Configuration edits to Mp3Recorder.csv:
-        Username,myusername@outlook.com
-        Password,@Mypassword
-        Sender,myusername@outlook.com
-        Receiver,myusername@outlook.com,buddy1@addr1.com,buddy2@addr2.com,etc
+    - Requires a tablet 'outlook' account, install via PlayStore.
+    - Mp3Recorder.csv configuration, <key>,<value>:
+        - Outlook host and port:
+            Host,smtp-mail.outlook.com
+            Port,587
+        - Outlook login username:
+            Username,myusername@outlook.com
+        - Outlook login password:
+            Password,@Mypassword
+        - Outlook email 'From':
+            Sender,myusername@outlook.com
+        - Outlook email 'To' list:
+        - wip - requires both yahoo and outlook, may be a bug or outlook requirement.
+            Receiver,myusername@outlook.com,buddy1@addr1.com,buddy2@addr2.com,
+        - Recorded base filename:
+            Mp3FileRoot,Mp3RecorderTest
+
     - Run the app via 'File Magager +', then 'Downloads', tap the mp3recorderapp.apk file
     - Choose 'Install'
     - Choose 'Open'
