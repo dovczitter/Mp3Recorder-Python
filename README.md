@@ -21,6 +21,7 @@ Android 11 Python app to record and email mp3 files.
     - READMD.md docs:
      <https://code.visualstudio.com/Docs/languages/markdown>
      <https://www.youtube.com/watch?v=jeOfS90Flf8&t=515s>
+     <https://marketplace.visualstudio.com/items?itemName=manuth.markdown-converter&ssr=false#overview>
     - Python classes:
         main.py
             - buildozer requirement 'main.py' entry
