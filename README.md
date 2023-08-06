@@ -18,10 +18,12 @@ Android 11 Python app to record and email mp3 files.
 ![EmailFile Screen](/screenshots/EmailFileScrn.png)
 
 # 3. Code Review
+    - gitHub: <https://github.com/dovczitter/
     - READMD.md docs:
-     <https://code.visualstudio.com/Docs/languages/markdown>
-     <https://www.youtube.com/watch?v=jeOfS90Flf8&t=515s>
-     <https://marketplace.visualstudio.com/items?itemName=manuth.markdown-converter&ssr=false#overview>
+        markdown doc: <https://code.visualstudio.com/Docs/languages/markdown>
+        markdown video: <https://www.youtube.com/watch?v=jeOfS90Flf8&t=515s>
+        markdown VisualStudio: <https://marketplace.visualstudio.com/items?itemName=manuth.markdown-converter&ssr=false#overview>
+     Mp3Recorder-Python>
     - Python classes:
         main.py
             - buildozer requirement 'main.py' entry

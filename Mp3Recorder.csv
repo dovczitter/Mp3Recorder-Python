@@ -4,7 +4,7 @@
 #
 
 # Recorded file name base filename:
-Mp3FileRoot,Mp3RecorderTest
+Mp3Filename,Mp3RecorderTest
 
 # Requires an 'outlook' account on the tablet.
 # Follow the Username,Password,Sender pattern.
