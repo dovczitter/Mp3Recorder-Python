@@ -55,7 +55,7 @@ class Recorder():
         self.mp3_filename = ''
         self.mp3Fn = ''
         self.config = dict()
-        self.MP3_FILEROOT = ''
+        self.MP3_FILENAME = ''
         self.EMAIL_USERNAME = ''
         self.EMAIL_PASSWORD = ''
         self.EMAIL_SENDER = ''
@@ -117,8 +117,8 @@ class Recorder():
                     print(f'[ {k}:{v} ]')
                     
             if self.config['Mp3FileRoot']:
-                self.MP3_FILEROOT = str(self.config['Mp3FileRoot'][0])
-                print(f'self.MP3_FILEROOT: {self.MP3_FILEROOT}')
+                self.MP3_FILENAME = str(self.config['Mp3Filename'][0])
+                print(f'self.MP3_FILENAME: {self.MP3_FILENAME}')
             if self.config['Username']:
                 self.EMAIL_USERNAME = str(self.config['Username'][0])
                 print(f'self.EMAIL_USERNAME: {self.EMAIL_USERNAME}')
@@ -178,7 +178,7 @@ class Recorder():
     def create_recorder(self):
         now = datetime.now()
         dt_string = now.strftime("%d%b%Y_%H%M%S")
-        self.mp3Fn = f'{self.MP3_FILEROOT}_{dt_string}.mp3'
+        self.mp3Fn = f'{self.MP3_FILENAME}_{dt_string}.mp3'
 
         self.recorder = self.MediaRecorder()
         self.recorder.setAudioSource(self.AudioSource.MIC)
