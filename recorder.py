@@ -7,10 +7,11 @@ import os
 # https://stackoverflow.com/questions/73909410/manage-external-storage-vs-write-external-storage
 # https://github.com/kivy/buildozer/issues/1004
 # https://developer.android.com/reference/android/os/Environment
-
+    
 Environment = autoclass('android.os.Environment')
 
 from sharedstorage import SharedStorage
+
 #
 PythonActivity = None
 if platform == "android":
@@ -58,8 +59,8 @@ class Recorder():
         self.MP3_FILENAME = ''
         self.EMAIL_USERNAME = ''
         self.EMAIL_PASSWORD = ''
-        self.EMAIL_SENDER = ''
-        self.EMAIL_RECEIVER = ''
+        self.EMAIL_FROM = ''
+        self.EMAIL_TO = ''
         self.SERVER_HOST = ''
         self.SERVER_PORT = 0
             
@@ -69,7 +70,8 @@ class Recorder():
         from os.path import exists
         import shutil
         import traceback
-
+#       from Mp3Recorder import LogMessage
+        
         self.config.clear()
             
         print('START # ----------------- configInit ------------------------ #')
@@ -116,7 +118,7 @@ class Recorder():
                     self.config[k] = v
                     print(f'[ {k}:{v} ]')
                     
-            if self.config['Mp3FileRoot']:
+            if self.config['Mp3Filename']:
                 self.MP3_FILENAME = str(self.config['Mp3Filename'][0])
                 print(f'self.MP3_FILENAME: {self.MP3_FILENAME}')
             if self.config['Username']:
@@ -125,18 +127,22 @@ class Recorder():
             if self.config['Password']:
                 self.EMAIL_PASSWORD = str(self.config['Password'][0])
                 print(f'self.EMAIL_PASSWORD: {self.EMAIL_PASSWORD}')
-            if self.config['Sender']:
-                self.EMAIL_SENDER = str(self.config['Sender'][0])
-                print(f'self.EMAIL_SENDER: {self.EMAIL_SENDER}')
-            if self.config['Receiver']:
-                self.EMAIL_RECEIVER = (','.join(self.config['Receiver']))
-                print(f'self.EMAIL_RECEIVER: {self.EMAIL_RECEIVER}')
+            if self.config['From']:
+                self.EMAIL_FROM = str(self.config['From'][0])
+                print(f'self.EMAIL_FROM: {self.EMAIL_FROM}')
+            if self.config['To']:
+                self.EMAIL_TO = self.config['To']
+                print(f'self.EMAIL_TO: {self.EMAIL_TO}')
             if self.config['Host']:
                 self.SERVER_HOST = str(self.config['Host'][0])
                 print(f'self.SERVER_HOST: {self.SERVER_HOST}')
             if self.config['Port']:
                 self.SERVER_PORT = int(self.config['Port'][0])
                 print(f'self.SERVER_PORT: {self.SERVER_PORT}')
+               
+#            LogMessage(f'Receiver: {self.EMAIL_TO}')
+#            rcvr = self.config['Receiver'] 
+#            LogMessage(f'self.config[Receiver]: {rcvr}') 
                 
         except Exception as error:
             self.config.clear()
@@ -270,14 +276,14 @@ class Recorder():
         print(f'SERVER_PORT |{self.SERVER_PORT}|')
         print(f'EMAIL_USERNAME |{self.EMAIL_USERNAME}|')
         print(f'EMAIL_PASSWORD |{self.EMAIL_PASSWORD}|')
-        print(f'EMAIL_RECEIVER |{self.EMAIL_RECEIVER}|')
+        print(f'EMAIL_TO |{self.EMAIL_TO}|')
         
         server.login(self.EMAIL_USERNAME, self.EMAIL_PASSWORD)
         
         # setup payload
         msg = MIMEMultipart()
-        msg['From'] = self.EMAIL_SENDER
-        msg['To'] = self.EMAIL_RECEIVER
+        msg['From'] = self.EMAIL_FROM
+        msg['To'] = ",".join(self.EMAIL_TO)
 
         # Subject
         msg['Subject'] = f'[{basefn}] From Mp3Recorder'
@@ -295,8 +301,7 @@ class Recorder():
         msg.attach(p)
         
         #Send the mail
-        text = msg.as_string()
-        server.sendmail(self.EMAIL_SENDER, self.EMAIL_RECEIVER, text)
+        server.sendmail(self.EMAIL_FROM, self.EMAIL_TO, msg.as_string())
         server.quit()        
         
         return f'[{basefn}] email complete.'

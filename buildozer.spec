@@ -32,7 +32,7 @@ source.exclude_dirs = tests, bin, venv, .venv, save*
 
 # ============================================================================================
 # (str) Application versioning (method 1)
-version = 1.1
+version = 2.0
 # ============================================================================================
 
 # (str) Application versioning (method 2)

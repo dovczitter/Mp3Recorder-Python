@@ -13,21 +13,27 @@ from kivy.uix.popup import Popup
 from kivy.utils import platform
 
 from recorder import Recorder
-
 mp3Recorder = Recorder()
+
+#mp3Recorder = None
 loadFilename = ''
 emailFileMsg = ''
-        
+      
 # ============================================
 #               Mp3Recorder
 # ============================================
 class Mp3Recorder(MDBoxLayout):
         
     def __init__(self, **kwargs):
+        
         global mp3Recorder
         
         super(Mp3Recorder, self).__init__(**kwargs)
         #
+        
+#        from recorder import Recorder
+#        mp3Recorder = Recorder()
+
         self.state = 'ready'
         self.time_started = False
         
@@ -45,13 +51,15 @@ class Mp3Recorder(MDBoxLayout):
         
         self.start_time()
 
-    # ----------------- timer   ------------------------ #
+    #
+    # -------- timer -------
+    #
     def timer(self, *args):
         from os.path import exists
         global loadFilename
         global emailFileMsg
 
-        time_str = f'Mp3Recorder {time.asctime()}'
+        time_str = f'Mp3Recorder [{time.asctime()}]'
         chk = ''
         # -------- TODO - log transition ----------- 
         if self.wifiCheck():
@@ -62,14 +70,19 @@ class Mp3Recorder(MDBoxLayout):
             self.ids.time_label.color = "yellow"
 
         wifi_str = f'Wifi {chk}'
-        self.ids.time_label.text = f'[{time_str}] [{wifi_str}]'
+        self.ids.time_label.text = f'{time_str} - [{wifi_str}]'
         
         if exists(loadFilename):
             self.update_labels()
-
+    #
+    # -------- start_time -------
+    #
     def start_time(self):
         Clock.schedule_interval(self.timer, 1)
 
+    #
+    # -------- wifiCheck -------
+    #
     def wifiCheck(self):
         from ping3 import ping, verbose_ping
         # https://github.com/kyan001/ping3
@@ -77,7 +90,23 @@ class Mp3Recorder(MDBoxLayout):
         # DN rsp : None
         rsp = ping('google.com')
         return isinstance(rsp, float)
+    #
+    # -------- LogMessage -------
+    #
+#    @staticmethod
+    def LogMessage(self, msg):
+        from datetime import datetime
         
+        now = datetime.now()
+        dt_string = now.strftime("%d%b%Y_%H%M%S")
+        
+        logmsg = f'[{dt_string}] {msg}'
+
+        self.ids.container.add_widget(
+            OneLineListItem(text=logmsg)
+        )
+        self.sv.scroll_to(logmsg)
+    
     # ======================
     #       record 
     # ======================
@@ -98,10 +127,9 @@ class Mp3Recorder(MDBoxLayout):
         else:
             recordFilename = mp3Recorder.get_mp3_filename()
             msg = mp3Recorder.email(recordFilename)
-            
-        self.ids.container.add_widget(
-            OneLineListItem(text=msg)
-        )
+        
+        self.LogMessage(msg)
+        
         self.update_labels()
 
     # ======================
@@ -109,9 +137,7 @@ class Mp3Recorder(MDBoxLayout):
     # ======================
     def emailfile(self):
         if self.state != 'ready':
-            self.ids.container.add_widget(
-                OneLineListItem(text='Recording in progress.')
-            )
+            self.LogMessage('Recording in progress.')
             self.update_labels()
             return
         
@@ -145,29 +171,18 @@ class Mp3Recorder(MDBoxLayout):
 
         if self.state == 'recording':
             self.ids.record_button.text = 'STOP Recording'
-            
-        # -------- Update header --------------
-        self.ids.container.add_widget(
-            OneLineListItem(text=f'[ ========== {time.asctime()} ========== ]')
-        )
 
         # -------- Email and EmailFile updates
         recordFilename = mp3Recorder.get_mp3_filename()
         if exists(recordFilename):
             basefn = basename(recordFilename)
             end_msg = f'[Audio : {self.state}] [Recorded File : {basefn}] '
-            self.ids.container.add_widget(
-                OneLineListItem(text=end_msg)
-            )
-            self.sv.scroll_to(end_msg)
+            self.LogMessage(end_msg)
 
         if exists(loadFilename):
             basefn = basename(loadFilename)
             end_msg = f'[Email File : {basefn}] '
-            self.ids.container.add_widget(
-                OneLineListItem(text=end_msg)
-            )
-            self.sv.scroll_to(end_msg)
+            self.LogMessage(end_msg)
             # NOTE - clear loacal loadFilename, generates only one update per load.
             loadFilename = ''
             
@@ -196,9 +211,15 @@ class LoadDialog(FloatLayout):
 # ============================================
 class Root(FloatLayout):
 
+    #
+    # -------- dismiss_popup --------
+    #
     def dismiss_popup(self):
         self._popup.dismiss()
 
+    #
+    # -------- show_popup --------
+    #
     def show_load(self):
         import os
         
@@ -216,6 +237,9 @@ class Root(FloatLayout):
         self._popup = Popup(title="Load file", content=content, size_hint=(0.9, 0.9))
         self._popup.open()
  
+    #
+    # -------- emailfile --------
+    #
     def emailfile(self, path, selection):
         from os.path import exists
 

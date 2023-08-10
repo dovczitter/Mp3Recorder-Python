@@ -3,11 +3,15 @@
 #    <key>,<value> pair
 #
 
+# --------------------------------------
 # Recorded file name base filename:
+# --------------------------------------
 Mp3Filename,Mp3RecorderTest
 
-# Requires an 'outlook' account on the tablet.
-# Follow the Username,Password,Sender pattern.
+# --------------------------------------
+# Email:
+# Requires an 'outlook' account on the tablet, use PlayStore
+# --------------------------------------
 
 # Outlook host and port
 Host,smtp-mail.outlook.com
@@ -20,8 +24,8 @@ Username,myusername@outlook.com
 Password,@Mypassword
 
 # Outlook email 'From':
-Sender,myusername@outlook.com
+From,myusername@outlook.com
 
 # Outlook email 'To' list:
-# wip - requires both yahoo and outlook, may be a bug or outlook requirement.
-Receiver,myusername@outlook.com,buddy1@addr1.com,buddy2@addr2.com,
+# No spaces.
+To,myusername@outlook.com,buddy1@addr1.com,buddy2@addr2.com,

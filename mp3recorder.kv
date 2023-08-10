@@ -2,60 +2,56 @@
 
     MDBoxLayout:
         orientation:'vertical'
-
+        spacing: "20dp"
+        
         MDLabel:
             id: time_label
             text: '00:00:00'
             font_size: 24
             color: "orange"
             halign: "left"
-            size_hint: 1, .1
+            size_hint: 1, .2
 
-        MDBoxLayout:
-            orientation:'horizontal'
-            spacing: "20dp"
-            size_hint: 1, .1
+        MDRaisedButton:
+            id: record_button
+            text: "START Recording"
+            font_size: 24
+            halign: "center"
+            size_hint: 0.75, 0.25
+            pos_hint: {'center_x':0.5, 'center_y':0.5}
+            on_release: root.record()
 
-            MDRaisedButton:
-                id: record_button
-                text: "START Recording"
-                font_size: 24
-                halign: "center"
-                size_hint: 0.4, 0.75
-                on_release: root.record()
+        MDRaisedButton:
+            id: email_button
+            text: 'Email'
+            font_size: 24
+            halign: "center"
+            size_hint: 0.75, 0.25
+            pos_hint: {'center_x':0.5, 'center_y':0.5}
+            on_release: root.email()
 
-            MDRaisedButton:
-                id: email_button
-                text: 'Email'
-                font_size: 24
-                halign: "center"
-                size_hint: 0.4, 0.75
-                on_release: root.email()
+        MDRaisedButton:
+            id: emailfile_button
+            text: 'Email File'
+            font_size: 24
+            halign: "center"
+            size_hint: 0.75, 0.25
+            pos_hint: {'center_x':0.5, 'center_y':0.5}
+            on_release: root.emailfile()                
 
-            MDRaisedButton:
-                id: emailfile_button
-                text: 'Email File'
-                font_size: 24
-                halign: "center"
-                size_hint: 0.4, 0.75
-                on_release: root.emailfile()                
+        MDRaisedButton:
+            id: exit_button
+            text: 'Exit'
+            font_size: 24
+            halign: "center"
+            size_hint: 0.75, 0.25
+            pos_hint: {'center_x':0.5, 'center_y':0.5}
+            on_release: root.exit()
 
-            MDRaisedButton:
-                id: exit_button
-                text: 'Exit'
-                font_size: 24
-                halign: "center"
-                size_hint: 0.4, 0.75
-                on_release: root.exit()
-
-        MDBoxLayout:
-            orientation:'vertical'
-            size_hint: 1, .8
-
-            MDScrollView:
-                MDList:
-                    pos_hint: {"x":0, "top":1}
-                    id: container
+        MDScrollView:
+            MDList:
+                pos_hint: {"x":0, "top":1}
+                id: container
 
 <LoadDialog>:
     BoxLayout:
