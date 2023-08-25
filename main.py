@@ -1,7 +1,6 @@
 from kivymd.app import MDApp
 from kivy.clock import Clock
 from kivymd.uix.boxlayout import MDBoxLayout
-import time
 
 from kivy.uix.scrollview import ScrollView
 from kivymd.uix.list import MDList, OneLineListItem
@@ -12,10 +11,16 @@ from kivy.properties import ObjectProperty
 from kivy.uix.popup import Popup
 from kivy.utils import platform
 
+import time
+from os.path import basename,exists
+
 from recorder import Recorder
+
+if platform == "android":
+    from android.permissions import request_permissions, Permission
+
 mp3Recorder = Recorder()
 
-#mp3Recorder = None
 loadFilename = ''
 emailFileMsg = ''
       
@@ -23,13 +28,32 @@ emailFileMsg = ''
 #               Mp3Recorder
 # ============================================
 class Mp3Recorder(MDBoxLayout):
-        
+    
     def __init__(self, **kwargs):
         
         global mp3Recorder
         
         super(Mp3Recorder, self).__init__(**kwargs)
         #
+        if not platform == "android":
+            return
+
+        required_permissions = [
+                    Permission.RECORD_AUDIO,
+                    Permission.WRITE_EXTERNAL_STORAGE,
+                    Permission.READ_EXTERNAL_STORAGE,
+                    # AttributeError: type object 'Permission' has no attribute 'MANAGE_EXTERNAL_STORAGE'                    
+#                   Permission.MANAGE_EXTERNAL_STORAGE,
+                    # AttributeError: type object 'Permission' has no attribute 'ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION'                    
+#                   Permission.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION,
+        # Wifi test:            
+                    Permission.ACCESS_WIFI_STATE, 
+                    Permission.INTERNET, 
+            ]
+        
+        print('========== BEFORE init request_permissions ==============')
+        request_permissions(required_permissions)
+        print('========== AFTER  init request_permissions ==============')
         
 #        from recorder import Recorder
 #        mp3Recorder = Recorder()
@@ -45,7 +69,6 @@ class Mp3Recorder(MDBoxLayout):
                      
         self.file_choose_root = Root()
         
-        mp3Recorder.ask_permissions()
         rsp = self.wifiCheck()
         print(f'after self.wifiCheck(), [{rsp}]')
         
@@ -55,7 +78,6 @@ class Mp3Recorder(MDBoxLayout):
     # -------- timer -------
     #
     def timer(self, *args):
-        from os.path import exists
         global loadFilename
         global emailFileMsg
 
@@ -91,7 +113,7 @@ class Mp3Recorder(MDBoxLayout):
         rsp = ping('google.com')
         return isinstance(rsp, float)
     #
-    # -------- LogMessage -------
+    # -------- LogMessage ------- WIP -----
     #
 #    @staticmethod
     def LogMessage(self, msg):
@@ -161,7 +183,6 @@ class Mp3Recorder(MDBoxLayout):
     #       update_labels
     # ======================
     def update_labels(self):
-        from os.path import basename, exists
         global mp3Recorder
         global loadFilename
 
@@ -221,17 +242,8 @@ class Root(FloatLayout):
     # -------- show_popup --------
     #
     def show_load(self):
-        import os
-        
         content = LoadDialog(emailfile=self.emailfile, cancel=self.dismiss_popup)
-        PATH = "."
-        if platform == "android":
-            from android.permissions import request_permissions, Permission
-            
-            request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
-            app_folder = os.path.dirname(os.path.abspath(__file__))
-            # Mp3Recorder mp3 files
-            PATH = "/storage/emulated/0/Music/Mp3Recorder"
+        PATH = "/storage/emulated/0/Music/Mp3Recorder"
         content.ids.filechooser.path = PATH
 
         self._popup = Popup(title="Load file", content=content, size_hint=(0.9, 0.9))
@@ -241,8 +253,6 @@ class Root(FloatLayout):
     # -------- emailfile --------
     #
     def emailfile(self, path, selection):
-        from os.path import exists
-
         global mp3Recorder
         global loadFilename
         global emailFileMsg

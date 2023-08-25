@@ -147,3 +147,8 @@
 - Call Class Method From Another Class:
 
     <https://stackoverflow.com/questions/3856413/call-class-method-from-another-class>
+
+- Android App Developement in Java
+
+    <https://www.youtube.com/watch?v=tZvjSl9dswg>
+    <https://www.youtube.com/watch?v=92PPz-zKxcU>

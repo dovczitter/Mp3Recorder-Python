@@ -32,7 +32,7 @@ source.exclude_dirs = tests, bin, venv, .venv, save*
 
 # ============================================================================================
 # (str) Application versioning (method 1)
-version = 2.5
+version = 2.7
 # ============================================================================================
 
 # (str) Application versioning (method 2)
@@ -105,7 +105,8 @@ fullscreen = 0
 # https://github.com/kivy/python-for-android/pull/2725
 # https://stackoverflow.com/questions/73909410/manage-external-storage-vs-write-external-storage
 # MANAGE_EXTERNAL_STORAGE not supported, requires manual enable, FileManager->Apps->Mp3Recorder->Permissions->Files and Media->Allow management of all files
-android.permissions = INTERNET, RECORD_AUDIO, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, WAKE_LOCK, MANAGE_EXTERNAL_STORAGE, ACCESS_WIFI_STATE
+#android.permissions = INTERNET, RECORD_AUDIO, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, WAKE_LOCK, MANAGE_EXTERNAL_STORAGE, ACCESS_WIFI_STATE
+android.permissions = INTERNET, RECORD_AUDIO, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, WAKE_LOCK, MANAGE_EXTERNAL_STORAGE, ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION,ACCESS_WIFI_STATE
 
 # (list) features (adds uses-feature -tags to manifest)
 #android.features = android.hardware.usb.host

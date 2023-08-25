@@ -2,51 +2,22 @@ from jnius import autoclass
 from kivy import Logger, platform
 from datetime import datetime
 import os
-
-# https://github.com/kivy/python-for-android/pull/2725
-# https://stackoverflow.com/questions/73909410/manage-external-storage-vs-write-external-storage
-# https://github.com/kivy/buildozer/issues/1004
-# https://developer.android.com/reference/android/os/Environment
-    
-Environment = autoclass('android.os.Environment')
+import traceback
 
 from sharedstorage import SharedStorage
 #
-PythonActivity = None
+Environment = None
+
 if platform == "android":
-    from android import mActivity, autoclass, api_version
-    from android.permissions import request_permissions, Permission
-
-    from android.storage import app_storage_path
-    from android.storage import primary_external_storage_path
-    from android.storage import secondary_external_storage_path
-
-    from plyer.platforms.android import activity
-
-    PythonActivity = autoclass('org.kivy.android.PythonActivity').mActivity
-    ExternalStoragePath = PythonActivity.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getPath()
-    DownLoadsPath = PythonActivity.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getPath()
-# ############################################################     
-# https://stackoverflow.com/questions/42253775/how-i-can-use-startactivity-method-from-service-in-python-kivy-jnius
-# https://stackoverflow.com/questions/62782648/android-11-scoped-storage-permissions
-#    Intent = autoclass('android.content.Intent')
-# ############################################################        
-    Context = autoclass('android.content.Context')
+    from android import autoclass
+    
+    Environment = autoclass('android.os.Environment')
 
 # =========================================================== #
 #                   class Recorder                         #
 # =========================================================== #
 
 class Recorder():
-
-    required_permissions = [
-            Permission.RECORD_AUDIO,
-            Permission.WRITE_EXTERNAL_STORAGE,
-            Permission.READ_EXTERNAL_STORAGE,
-# Wifi test:            
-            Permission.ACCESS_WIFI_STATE, 
-            Permission.INTERNET, 
-    ]
 
     def __init__(self, **kwargs):
         super(Recorder, self).__init__(**kwargs)
@@ -69,13 +40,14 @@ class Recorder():
         self.EMAIL_TO = ''
         self.SERVER_HOST = ''
         self.SERVER_PORT = 0
+        
+        self.configInit()
             
     # ----------------- configInit ------------------------ #        
     def configInit(self):
         
         from os.path import exists
         import shutil
-        import traceback
 #       from Mp3Recorder import LogMessage
         
         self.config.clear()
@@ -161,47 +133,6 @@ class Recorder():
             print(' ================================ configInit traceback START ================================ ')
             print(err)
             print(' ================================ configInit traceback END ================================ ')
-   
-    # ----------------- permissions ------------------------ #        
-    def check_permission(permission, activity=None):
-        if platform == "android":
-            activity = PythonActivity
-        if not activity:
-            return False
-
-        permission_status = 0
-        permission_granted = 0 == permission_status
-        return permission_granted
-
-    def ask_permission(self,permission):
-        PythonActivity.requestPermissions([permission])
-        if len(self.config) == 0:
-            self.configInit()
-
-    def ask_permissions(self):
-# ############################################################ 
-# https://pypi.org/project/python-settings/
-# rm: add 'python-settings' to buildozer requirements
-#        from python_settings import settings 
-#        from . import settings as my_local_settings
-#        settings.configure(my_local_settings) # configure() receives a python module
-#        assert settings.configured # now you are set
-#        PythonActivity.startActivity(       
-#            Intent.setAction(settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-#        )
-# ############################################################        
-        request_permissions(self.required_permissions)
-        if len(self.config) == 0:
-            self.configInit()
-
-    def check_required_permission(self):
-        permissions = self.required_permissions
-        #
-        has_permissions = True
-        for permission in permissions:
-            if not self.check_permission(permission):
-                has_permissions = False
-        return has_permissions
             
     def create_recorder(self):
         now = datetime.now()
@@ -226,16 +157,9 @@ class Recorder():
     # ----------------- record_start ------------------------ #
     def record_start(self):
         self.get_recorder()
-        
         self.mp3_filename = ''
-        
-        if self.check_required_permission():
-            # - new
-            self.create_recorder()
-            # - 
-            self.recorder.start()
-        else:
-            self.ask_permissions()
+        self.create_recorder()
+        self.recorder.start()
     
     # ----------------- record_stop ------------------------ #
     def record_stop(self):
