@@ -4,9 +4,9 @@
 #
 
 # --------------------------------------
-# Recorded file name base filename:
+# Recorded file base filename:
 # --------------------------------------
-Mp3Filename,Mp3RecorderTest
+BaseFilename,Mp3RecorderTest
 
 # --------------------------------------
 # Email:

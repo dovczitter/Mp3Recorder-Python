@@ -5,12 +5,14 @@ import os
 import traceback
 
 from sharedstorage import SharedStorage
+
+#from moviepy.editor import VideoFileClip
+
 #
 Environment = None
 
 if platform == "android":
     from android import autoclass
-    
     Environment = autoclass('android.os.Environment')
 
 # =========================================================== #
@@ -18,6 +20,14 @@ if platform == "android":
 # =========================================================== #
 
 class Recorder():
+
+# https://developer.android.com/reference/android/media/MediaRecorder.OutputFormat
+# https://stackoverflow.com/questions/4886365/androidhow-to-get-media-recorder-output-in-mp3-format
+# https://pypi.org/project/PythonVideoConverter/
+# https://dev.to/dheerajprogrammer/mp4-to-mp3-converter-in-python-5eba
+
+# This one looks the best....
+# https://webcodespace.com/how-to-convert-mp4-to-mp3-using-python/
 
     def __init__(self, **kwargs):
         super(Recorder, self).__init__(**kwargs)
@@ -33,7 +43,7 @@ class Recorder():
         self.mp3_filename = ''
         self.mp3Fn = ''
         self.config = dict()
-        self.MP3_FILENAME = ''
+        self.BASE_FILENAME = ''
         self.EMAIL_USERNAME = ''
         self.EMAIL_PASSWORD = ''
         self.EMAIL_FROM = ''
@@ -96,9 +106,9 @@ class Recorder():
                     self.config[k] = v
                     print(f'[ {k}:{v} ]')
                     
-            if self.config['Mp3Filename']:
-                self.MP3_FILENAME = str(self.config['Mp3Filename'][0]).replace(' ','')
-                print(f'self.MP3_FILENAME: {self.MP3_FILENAME}')
+            if self.config['BaseFilename']: 
+                self.BASE_FILENAME = str(self.config['BaseFilename'][0]).replace(' ','')
+                print(f'self.BASE_FILENAME: {self.BASE_FILENAME}')
             if self.config['Username']:
                 self.EMAIL_USERNAME = str(self.config['Username'][0]).replace(' ','')
                 print(f'self.EMAIL_USERNAME: {self.EMAIL_USERNAME}')
@@ -137,7 +147,8 @@ class Recorder():
     def create_recorder(self):
         now = datetime.now()
         dt_string = now.strftime("%d%b%Y_%H%M%S")
-        self.mp3Fn = f'{self.MP3_FILENAME}_{dt_string}.mp3'
+#       self.mp4Fn = f'{self.BASE_FILENAME}_{dt_string}.mp4'
+        self.mp3Fn = f'{self.BASE_FILENAME}_{dt_string}.mp3'
 
         self.recorder = self.MediaRecorder()
         self.recorder.setAudioSource(self.AudioSource.MIC)
@@ -170,16 +181,23 @@ class Recorder():
         ss = SharedStorage()
         share = ss.copy_to_shared(self.mp3Fn)
         path = ss.copy_from_shared(share)
+        
         self.mp3_filename = path
 
         self.recorder.reset()
         self.recorder.release()
         # we need to do this in order to make the object reusable
         self.remove_recorder()
-          
+
     # ----------------- get_mp3_filename ------------------------ #
     def get_mp3_filename(self):
         return self.mp3_filename
+
+    # ----------------- get_mp3_path ------------------------ #
+    def get_mp3_path(self):
+#       path = "/storage/emulated/0/Movies/Mp3Recorder"
+        path = "/storage/emulated/0/Music/Mp3Recorder"
+        return path
     
     # ======================
     #       record 

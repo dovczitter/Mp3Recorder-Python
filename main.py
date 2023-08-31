@@ -12,15 +12,13 @@ from kivy.uix.popup import Popup
 from kivy.utils import platform
 
 import time
+
 from os.path import basename,exists
+from jnius import autoclass
 
 from recorder import Recorder
 
-if platform == "android":
-    from android.permissions import request_permissions, Permission
-
-mp3Recorder = Recorder()
-
+mp3Recorder = ''
 loadFilename = ''
 emailFileMsg = ''
       
@@ -31,32 +29,29 @@ class Mp3Recorder(MDBoxLayout):
     
     def __init__(self, **kwargs):
         
+        if not platform == "android":
+            # ===== ToDo: Log an error =========
+            return
+
+        from android.permissions import request_permissions, Permission
+        
         global mp3Recorder
         
         super(Mp3Recorder, self).__init__(**kwargs)
         #
-        if not platform == "android":
-            return
-
-        required_permissions = [
-                    Permission.RECORD_AUDIO,
-                    Permission.WRITE_EXTERNAL_STORAGE,
-                    Permission.READ_EXTERNAL_STORAGE,
-                    # AttributeError: type object 'Permission' has no attribute 'MANAGE_EXTERNAL_STORAGE'                    
-#                   Permission.MANAGE_EXTERNAL_STORAGE,
-                    # AttributeError: type object 'Permission' has no attribute 'ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION'                    
-#                   Permission.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION,
-        # Wifi test:            
-                    Permission.ACCESS_WIFI_STATE, 
-                    Permission.INTERNET, 
-            ]
-        
+        # 'request_permissions' first, waits in background until 'permissions_external_storage'
+        # is complete. Then allows for the request respons, then continues with kivy. 
         print('========== BEFORE init request_permissions ==============')
-        request_permissions(required_permissions)
+        request_permissions([Permission.RECORD_AUDIO, Permission.ACCESS_WIFI_STATE, Permission.INTERNET])
         print('========== AFTER  init request_permissions ==============')
-        
-#        from recorder import Recorder
-#        mp3Recorder = Recorder()
+      
+        # https://programtalk.com/vs4/python/adywizard/car-locator/main.py/
+        # https://github.com/kivy/plyer/issues/661
+        print('========== BEFORE init permissions_external_storage ==============')
+        self.permissions_external_storage()
+        print('========== AFTER  init permissions_external_storage ==============')
+
+        mp3Recorder = Recorder()
 
         self.state = 'ready'
         self.time_started = False
@@ -74,6 +69,36 @@ class Mp3Recorder(MDBoxLayout):
         
         self.start_time()
 
+    def permissions_external_storage(self, *args):  
+        # https://github.com/kivy/plyer/issues/661                
+        if platform == "android":
+            PythonActivity = autoclass("org.kivy.android.PythonActivity")
+            Environment = autoclass("android.os.Environment")
+            Intent = autoclass("android.content.Intent")
+            Settings = autoclass("android.provider.Settings")
+            Uri = autoclass("android.net.Uri")
+            # If you have access to the external storage, do whatever you need
+            if Environment.isExternalStorageManager():
+                # If you don't have access, launch a new activity to show the user the system's dialog
+                # to allow access to the external storage
+                pass
+            else:
+                try:
+                    from typing import cast
+                    activity = PythonActivity.mActivity.getApplicationContext()
+                    uri = Uri.parse("package:" + activity.getPackageName())
+                    intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
+                    currentActivity = cast(
+                    "android.app.Activity", PythonActivity.mActivity
+                    )
+                    currentActivity.startActivityForResult(intent, 101)
+                except:
+                    intent = Intent()
+                    intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                    currentActivity = cast(
+                    "android.app.Activity", PythonActivity.mActivity
+                    )
+                    currentActivity.startActivityForResult(intent, 101) 
     #
     # -------- timer -------
     #
@@ -106,7 +131,7 @@ class Mp3Recorder(MDBoxLayout):
     # -------- wifiCheck -------
     #
     def wifiCheck(self):
-        from ping3 import ping, verbose_ping
+        from ping3 import ping
         # https://github.com/kyan001/ping3
         # UP rsp : 0.016164541244506836
         # DN rsp : None
@@ -148,6 +173,7 @@ class Mp3Recorder(MDBoxLayout):
             msg = 'Recording in progress.'
         else:
             recordFilename = mp3Recorder.get_mp3_filename()
+            print(f'================= recordFilename [{recordFilename}] ====================')
             msg = mp3Recorder.email(recordFilename)
         
         self.LogMessage(msg)
@@ -243,8 +269,7 @@ class Root(FloatLayout):
     #
     def show_load(self):
         content = LoadDialog(emailfile=self.emailfile, cancel=self.dismiss_popup)
-        PATH = "/storage/emulated/0/Music/Mp3Recorder"
-        content.ids.filechooser.path = PATH
+        content.ids.filechooser.path = mp3Recorder.get_mp3_path()
 
         self._popup = Popup(title="Load file", content=content, size_hint=(0.9, 0.9))
         self._popup.open()
@@ -277,4 +302,5 @@ Factory.register('Root', cls=Root)
 Factory.register('LoadDialog', cls=LoadDialog)
 
 if __name__ == '__main__':
+    
     Mp3RecorderApp().run()
